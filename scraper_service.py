@@ -44,7 +44,7 @@ def scrape():
 @app.route('/metrics')
 def metrics():
     # Expose the /metrics endpoint for Prometheus to scrape
-    return Response(generate_latest(custom_registry), mimetype='text/plain')
+    return Response(generate_latest(custom_registry), mimetype='text/plain')  # using a custom registry to avoid default metrics
 
 
 def main():

@@ -14,7 +14,7 @@ COPY --from=build /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.
 COPY --from=build /usr/local/bin/* /usr/local/bin/
 
 # Create a non-root user
-RUN useradd -m appuser
+RUN useradd -u 1000 -m appuser
 
 # Change ownership of the working directory
 RUN chown -R appuser:appuser /app

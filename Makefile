@@ -40,3 +40,17 @@ clean: stop remove
 
 # Target to build, run, and clean the container
 all: clean build run
+
+# Docker Compose targets
+
+# Target to build and run the application using Docker Compose
+compose-up:
+	docker compose up --build
+
+# Target to stop and remove the containers defined in Docker Compose
+compose-down:
+	docker compose down
+
+# Target to remove the stopped containers and images from Docker Compose
+compose-clean:
+	docker compose down --rmi all

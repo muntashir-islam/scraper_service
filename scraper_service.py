@@ -32,7 +32,7 @@ def scrape():
         response.raise_for_status()  # Raise an HTTPError for bad responses (4xx, 5xx)
     except requests.exceptions.RequestException as e:
         # Increment the counter for failed requests (e.g., code 500 for exceptions)
-        http_get_counter.labels(url=url, code="500").inc()
+        # http_get_counter.labels(url=url, code="500").inc()
         return jsonify({'error': str(e)}), 500
 
     # return jsonify({'data': response.text}), 200
@@ -41,6 +41,8 @@ def scrape():
         "status_code": response.status_code,
         "content": response.text[:200]  # Return first 200 characters of the response
     })
+
+
 @app.route('/metrics')
 def metrics():
     # Expose the /metrics endpoint for Prometheus to scrape

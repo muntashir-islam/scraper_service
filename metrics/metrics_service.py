@@ -3,7 +3,6 @@ from prometheus_client import Counter, generate_latest, start_http_server, Colle
 
 app = Flask(__name__)
 
-
 custom_registry = CollectorRegistry()
 # Prometheus metric to count HTTP GET requests
 http_get_counter = Counter(
@@ -11,6 +10,7 @@ http_get_counter = Counter(
     ['url', 'code'],
     registry=custom_registry
 )
+
 
 @app.route('/metrics')
 def metrics():

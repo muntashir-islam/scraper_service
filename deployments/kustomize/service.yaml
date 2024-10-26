@@ -6,7 +6,10 @@ spec:
   selector:
     app: scraper-service
   ports:
-  - protocol: TCP
+  - name: scraper-port
     port: 8080
     targetPort: 8080
+  - name: metrics-port
+    port: 9095
+    targetPort: 9095
   type: ClusterIP

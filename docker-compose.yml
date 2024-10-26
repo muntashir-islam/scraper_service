@@ -1,11 +1,34 @@
-version: '3.8'
-
 services:
+  metrics_service:
+    build:
+      context: ./metrics
+      dockerfile: Dockerfile
+    ports:
+      - "9095:9095"
+    user: "1000:3000"
+    networks:
+      - scraper_network
+
   scraper_service:
     build:
-      context: .
+      context: ./scraper
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     user: "1000:3000"
+    environment:
+      - METRICS_SERVICE_URL=http://metrics_service:9095/increment
+    networks:
+      - scraper_network
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Mount your Prometheus configuration file
+    networks:
+      - scraper_network
 
+networks:
+  scraper_network:
+    driver: bridge

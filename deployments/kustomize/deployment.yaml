@@ -13,10 +13,14 @@ spec:
         app: scraper-service
     spec:
       containers:
-      - name: scraper-service
+      - name: scraper
         image: muntashir/scraper_service:latest  # Replace with your image name
         ports:
         - containerPort: 8080
+      - name: metrics
+        image: muntashir/metrics_service:latest  # Replace with your image name
+        ports:
+          - containerPort: 9095
       securityContext:
         runAsUser: 1000           # Use the UID of appuser
         runAsGroup: 3000          # Set the group ID to a non-root group

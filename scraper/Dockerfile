@@ -26,7 +26,7 @@ USER appuser
 COPY scraper_service.py .
 
 # Expose the port the service will run on
-EXPOSE 8080 9095
+EXPOSE 8080
 
 # Command to run the application
 CMD ["python", "scraper_service.py", "--listen=0.0.0.0:8080"]

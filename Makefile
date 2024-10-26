@@ -1,6 +1,8 @@
 
-IMAGE_NAME = scraper_service
-CONTAINER_NAME = scraper_service_container
+IMAGE_NAME_SCRAPER = scraper_service
+IMAGE_NAME_METRICS = metrics_service
+CONTAINER_SCRAPER = scraper_service_container
+CONTAINER_METRICS = scraper_service_container
 PORT = 8080
 
 # Run the application locally
@@ -20,15 +22,18 @@ local-stop:
 
 # Target to build the Docker image
 build:
-	docker build -t $(IMAGE_NAME) .
+	cd scraper && docker build -t $(IMAGE_NAME_SCRAPER) .
+	cd metrics && docker build -t $(IMAGE_NAME_METRICS) .
 
 # Target to run the Docker container
 run:
-	docker run --name $(CONTAINER_NAME) -p $(PORT):8080 $(IMAGE_NAME)
+	docker run --name $(CONTAINER_SCRAPER) -p $(PORT):8080 $(IMAGE_NAME_SCRAPER)
+	docker run --name $(CONTAINER_METRICS) -p $(PORT):9095 $(IMAGE_NAME_METRICS)
 
 # Target to stop the running container
 stop:
-	docker stop $(CONTAINER_NAME)
+	docker stop $(CONTAINER_SCRAPER)
+	docker stop $(CONTAINER_METRICS)
 
 # Target to remove the stopped container
 remove:

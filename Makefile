@@ -7,7 +7,8 @@ PORT = 8080
 
 # Run the application locally
 local-run:
-	./scraper_service.py --listen=0.0.0.0:8080 &
+	./scraper/scraper_service.py --listen=0.0.0.0:8080 &
+
 
 # Stop the locally running scraper_service
 local-stop:

@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 from flask import Flask, request, Response
-from prometheus_client import Counter, generate_latest, start_http_server, CollectorRegistry
+from prometheus_client import Counter, generate_latest, CollectorRegistry
+import argparse
 
 app = Flask(__name__)
 
@@ -32,6 +34,17 @@ def increment_counter():
     return {"status": "success"}, 200
 
 
+def main():
+    parser = argparse.ArgumentParser(description='Run the metrics service')
+    parser.add_argument('--listen', type=str, default=":9095", help='Host and the port number to listen on')
+    args = parser.parse_args()
+
+    host, port = args.listen.split(':')  # Extract host and port from the `--listen` argument
+    port = int(port)  # Convert port to an integer for Flask
+
+    app.run(host=host if host else "0.0.0.0", port=port)
+
+
 if __name__ == '__main__':
     # Run Flask app on port 9095
-    app.run(host='0.0.0.0', port=9095)
+    main()

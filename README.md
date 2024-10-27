@@ -92,7 +92,7 @@ make local-stop
 ```
 ### Deploy Service into Kubernetes
 ```shell
-kubectl apply -k deployment/.
+kubectl apply -k deployment/kustomize/.
 ```
 
 

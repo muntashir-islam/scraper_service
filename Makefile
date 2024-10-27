@@ -2,7 +2,7 @@
 IMAGE_NAME_SCRAPER = scraper_service
 IMAGE_NAME_METRICS = metrics_service
 CONTAINER_SCRAPER = scraper_service_container
-CONTAINER_METRICS = scraper_service_container
+CONTAINER_METRICS = metrics_service_container
 PORT1 = 8080
 PORT2 = 9095
 SCRAPER_TEST_DIR = scraper
@@ -55,7 +55,7 @@ build:
 
 # Target to run the Docker container
 run:
-	docker run --name $(CONTAINER_SCRAPER) -p $(PORT1):8080 $(IMAGE_NAME_SCRAPER)
+	docker run --name $(CONTAINER_SCRAPER) -e METRICS_SERVICE_URL=http://${CONTAINER_METRICS}:9095/increment -p $(PORT1):8080 $(IMAGE_NAME_SCRAPER) & \
 	docker run --name $(CONTAINER_METRICS) -p $(PORT2):9095 $(IMAGE_NAME_METRICS)
 
 # Target to stop the running container

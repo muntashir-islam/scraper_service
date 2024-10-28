@@ -20,6 +20,19 @@ services:
       - METRICS_SERVICE_URL=http://metrics_service:9095/increment
     networks:
       - scraper_network
+
+  scraper_requester:
+    build:
+      context: ./scraper_requester
+      dockerfile: Dockerfile
+    container_name: scraper_requester
+    user: "1000:3000"
+    environment:
+      - SCRAPER_SERVICE_URL=http://scraper_service:8080
+      - REQUEST_INTERVAL=15
+    networks:
+      - scraper_network
+
   prometheus:
     image: prom/prometheus:latest
     ports:

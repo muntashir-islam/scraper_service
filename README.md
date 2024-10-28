@@ -17,25 +17,18 @@ This repository contains a microservice application consisting of a **scraper se
 
 ### Build and Run the Services
 
-To build and run both services, run:
+To build and run all services, run:
 
 ```bash
 make compose-up
 ```
-To test the unittest cases
+This will bring up all the services and start A script to regularly request scraper_service
 
-```bash
-make test
-```
-Generate some random load from another terminal
-```bash
-python scraper_requester.py
-```
-This will generate some load into **scraper_service** including 200, 404, 500 status code
-To check the metrics 
+To check the metrics
 ```shell
 curl localhost:9095/metrics
 ```
+
 This will show metrics following way
 ```shell
 ➜  ~ curl localhost:9095/metrics
@@ -52,6 +45,7 @@ http_get_created{code="404",url="https://phaidra.ai/trackrecord"} 1.729988549986
 http_get_created{code="200",url="https://wikipedia.org"} 1.7299885659217694e+09
 http_get_created{code="200",url="https://github.com"} 1.7299885711576858e+09
 ```
+
 You can view this into prometheus server by browsing 
 ```shell
 http://localhost:9090
@@ -59,7 +53,7 @@ http://localhost:9090
 and selecting http_get_total
 
 ### Here are some PromQL query to play with this metrics
- 
+
 To find total 404/400 error
 ```shell
 sum(http_get_total{code="404", job="metrics_service"})
@@ -79,18 +73,43 @@ Return a whole range of time (in this case 5 minutes up to the query time) for t
 http_get_created{job="metrics_service"}[5m]
 ```
 
-### Build and Run the Services without Docker
+To test the unittest cases
+```bash
+make test
+```
 
-To start services
+### Build and Run the Services without Locally
+
+Ensure that you have python installed with version 3.10 and above
+```shell
+python --version
+```
+Set Virtual Environment
+```shell
+cd scrapper_service
+python -m venv venv
+source venv/bin/activate
+
+```
+Install necessary packages 
+
+```shell
+pip install Flask requests prometheus_client
+```
+
+To start all services
 ```shell
 make local-start
 ```
+This will start all the services including a script to regularly request scraper_service
 
-To stop services
+To stop services bring another console and run
 ```shell
 make local-stop
 ```
+
 ### Deploy Service into Kubernetes
+
 ```shell
 kubectl apply -k deployment/kustomize/.
 ```
@@ -99,7 +118,7 @@ As all are clusterIP services, you have to use Port-forward to access these serv
 kubectl port-forward svc/scraper-service 9095:9095 #access metrics Service
 kubectl port-forward svc/scraper-service 8080:8080 # Access Scraper Services
 kubectl port-forward svc/prometheus  9090:9090 #Access Prometheus
- 
+
 ```
 
 

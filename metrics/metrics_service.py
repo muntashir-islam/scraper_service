@@ -2,8 +2,16 @@
 from flask import Flask, request, Response
 from prometheus_client import Counter, generate_latest, CollectorRegistry
 import argparse
+import logging
 
 app = Flask(__name__)
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger("metrics_service")
 
 custom_registry = CollectorRegistry()
 # Prometheus metric to count HTTP GET requests
@@ -17,6 +25,7 @@ http_get_counter = Counter(
 @app.route('/metrics')
 def metrics():
     # Return the latest metrics
+    logger.info("Metrics endpoint called.")
     return Response(generate_latest(custom_registry), mimetype='text/plain')
 
 
@@ -27,10 +36,13 @@ def increment_counter():
     code = data.get('code')
 
     if not url or not code:
-        return {"error": "URL and code are required"}, 400
+        error_message = "URL and code are required"
+        logger.warning(error_message)
+        return {"error": error_message}, 400
 
     # Increment the Prometheus counter with URL and status code
     http_get_counter.labels(url=url, code=code).inc()
+    logger.info(f"Incremented counter for URL: {url} with status code: {code}")
     return {"status": "success"}, 200
 
 
@@ -41,7 +53,7 @@ def main():
 
     host, port = args.listen.split(':')  # Extract host and port from the `--listen` argument
     port = int(port)  # Convert port to an integer for Flask
-
+    logger.info(f"Starting metrics service on {host}:{port}")
     app.run(host=host if host else "0.0.0.0", port=port)
 
 

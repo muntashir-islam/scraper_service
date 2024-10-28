@@ -1,6 +1,7 @@
 
 IMAGE_NAME_SCRAPER = muntashir/scraper_service
 IMAGE_NAME_METRICS = muntashir/metrics_service
+IMAGE_NAME_SCRAPPER_REQUESTER = muntashir/scraper_requester
 CONTAINER_SCRAPER = scraper_service_container
 CONTAINER_METRICS = metrics_service_container
 PORT1 = 8080
@@ -20,12 +21,12 @@ test-metrics:
 	$(PYTHON) -m unittest discover -s $(METRICS_TEST_DIR) -p "test*"
 
 
-local-stop: local-stop-scraper local-stop-metrics
+local-stop: local-stop-scraper local-stop-metrics local-stop-requester
 # Run the application locally
 local-start:
 	./scraper/scraper_service.py --listen=0.0.0.0:8080 &
 	./metrics/metrics_service.py --listen=0.0.0.0:9095 &
-
+	./scraper_requester/scraper_requester.py &
 
 # Stop the locally running scraper_service
 local-stop-scraper:
@@ -48,10 +49,43 @@ local-stop-metrics:
 		echo "No running service found." ; \
 	fi
 
+local-stop-requester:
+	@echo "Stopping local scraper_requester.py..."
+	@PID=$$(ps aux | grep '[s]craper_requester.py' | awk '{print $$2}') && \
+	if [ -n "$$PID" ]; then \
+		kill $$PID;  \
+		echo "Service stopped." ; \
+	else \
+		echo "No running service found." ; \
+    fi
+
 # Target to build the Docker image
 build:
 	cd scraper && docker build -t $(IMAGE_NAME_SCRAPER) .
 	cd metrics && docker build -t $(IMAGE_NAME_METRICS) .
+	cd scraper_requester && docker build -t $(IMAGE_NAME_SCRAPPER_REQUESTER) .
+
+
+push:
+	docker push $(IMAGE_NAME_SCRAPER)
+	docker push $(IMAGE_NAME_METRICS)
+	docker push $(IMAGE_NAME_SCRAPPER_REQUESTER)
+
+
+# Docker Compose targets
+
+# Target to build and run the application using Docker Compose
+compose-up:
+	docker compose up --build
+
+# Target to stop and remove the containers defined in Docker Compose
+compose-down:
+	docker compose down
+
+# Target to remove the stopped containers and images from Docker Compose
+compose-clean:
+	docker compose down --rmi all
+
 
 # Target to run the Docker container
 run:
@@ -68,28 +102,11 @@ remove:
 	docker rm $(CONTAINER_SCRAPER)
 	docker rm $(CONTAINER_METRICS)
 
+
 # Target to clean up the Docker image and container
 clean: stop remove
 	docker rmi $(IMAGE_NAME_SCRAPER) || true
 	docker rmi $(IMAGE_NAME_METRICS) || true
 
-push:
-	docker push $(IMAGE_NAME_SCRAPER)
-	docker push $(IMAGE_NAME_METRICS)
-
 # Target to build, run, and clean the container
 all: clean build run
-
-# Docker Compose targets
-
-# Target to build and run the application using Docker Compose
-compose-up:
-	docker compose up --build
-
-# Target to stop and remove the containers defined in Docker Compose
-compose-down:
-	docker compose down
-
-# Target to remove the stopped containers and images from Docker Compose
-compose-clean:
-	docker compose down --rmi all

@@ -21,6 +21,8 @@ spec:
         image: muntashir/metrics_service:latest  # Replace with your image name
         ports:
           - containerPort: 9095
+      - name: scraper-requester
+        image: muntashir/scraper_requester:latest  # Replace with your image name
       securityContext:
         runAsUser: 1000           # Use the UID of appuser
         runAsGroup: 3000          # Set the group ID to a non-root group

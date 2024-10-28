@@ -1,7 +1,16 @@
+#!/usr/bin/env python3
 import requests
 import time
 import os
 import random
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger("scraper_requester")
 
 # Configuration for the scraper_service and interval settings
 SCRAPER_SERVICE_URL = os.getenv('SCRAPER_SERVICE_URL', 'http://localhost:8080')  # Default URL
@@ -20,6 +29,7 @@ TARGET_URLS = [
 def make_scraper_request():
     """Send a request to scraper_service with a randomly selected URL."""
     target_url = random.choice(TARGET_URLS)  # Randomly select a target URL
+    logger.info(f"Making request to scraper_service for URL: {target_url}")
     try:
         response = requests.post(
             SCRAPER_SERVICE_URL,
@@ -29,17 +39,17 @@ def make_scraper_request():
         data = response.json()
 
         # Log the result of the scrape
-        print(f"Scraped URL: {data.get('url')}")
-        print(f"Status Code: {data.get('status_code')}")
-        print(f"Content (first 200 chars): {data.get('content')[:200]}")
+        logger.info(f"Scraped URL: {data.get('url')}")
+        logger.info(f"Status Code: {data.get('status_code')}")
+        logger.info(f"Content (first 200 chars): {data.get('content')[:200]}")
 
     except requests.exceptions.RequestException as e:
-        print(f"Error requesting scraper_service: {e}")
+        logger.error(f"Error requesting scraper_service: {e}")
 
 
 def main():
     """Main loop to periodically call the scraper_service."""
-    print(f"Starting scraper service requests to {SCRAPER_SERVICE_URL} every {REQUEST_INTERVAL} seconds.")
+    logger.info(f"Starting scraper service requests to {SCRAPER_SERVICE_URL} every {REQUEST_INTERVAL} seconds.")
 
     while True:
         make_scraper_request()

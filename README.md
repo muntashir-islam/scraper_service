@@ -119,6 +119,7 @@ make local-stop
 ```shell
 kubectl apply -k deployment/kustomize/.
 ```
+This will deploy all necessary services including load generator.
 As all are clusterIP services, you have to use Port-forward to access these services
 ```shell
 kubectl port-forward svc/scraper-service 9095:9095 #access metrics Service

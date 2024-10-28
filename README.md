@@ -6,12 +6,13 @@ This repository contains a microservice application consisting of a **scraper se
 
 - **scraper_service**: Listens for POST requests containing URLs, performs HTTP GET requests, and updates Prometheus metrics.
 - **metrics_service**: Exposes Prometheus metrics related to the HTTP GET requests made by the scraper service.
+- **requester_service**: A script to regularly request scraper_service.
 
 ## Prerequisites
 
 - Docker
 - Docker Compose
-- Python 3.11 or higher (for local testing)
+- Python 3.10 or higher (for local testing)
 
 ## Getting Started
 
@@ -102,6 +103,11 @@ To start all services
 make local-start
 ```
 This will start all the services including a script to regularly request scraper_service
+
+Test the service after run
+```bash
+make test
+```
 
 To stop services bring another console and run
 ```shell

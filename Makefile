@@ -1,6 +1,6 @@
 
-IMAGE_NAME_SCRAPER = scraper_service
-IMAGE_NAME_METRICS = metrics_service
+IMAGE_NAME_SCRAPER = muntashir/scraper_service
+IMAGE_NAME_METRICS = muntashir/metrics_service
 CONTAINER_SCRAPER = scraper_service_container
 CONTAINER_METRICS = metrics_service_container
 PORT1 = 8080
@@ -72,6 +72,10 @@ remove:
 clean: stop remove
 	docker rmi $(IMAGE_NAME_SCRAPER) || true
 	docker rmi $(IMAGE_NAME_METRICS) || true
+
+push:
+	docker push $(IMAGE_NAME_SCRAPER)
+	docker push $(IMAGE_NAME_METRICS)
 
 # Target to build, run, and clean the container
 all: clean build run
